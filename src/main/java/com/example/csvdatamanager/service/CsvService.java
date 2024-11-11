@@ -32,15 +32,14 @@ public class CsvService {
 					.map(line -> {
 						String[] data = line.split(",");
 						CsvRecord record = new CsvRecord();
-						record.setSource(data[0]);
-						String temp = record.getSource();
-						record.setCodeListCode(data[1]);
-						record.setCode(data[2]);
-						record.setDisplayValue(data[3]);
-						record.setLongDescription(data[4]);
-						record.setFromDate(convertDateFromCsv(data[5].replace("\"", "")));
-						record.setToDate(convertDateFromCsv(data[6].replace("\"", "")));
-						record.setSortingPriority(convertToIntFromCsv(data[7].replace("\"", "")));
+						record.setSource(removeQutationsFromString(data[0]));
+						record.setCodeListCode(removeQutationsFromString(data[1]));
+						record.setCode(removeQutationsFromString(data[2]));
+						record.setDisplayValue(removeQutationsFromString(data[3]));
+						record.setLongDescription(removeQutationsFromString(data[4]));
+						record.setFromDate(convertDateFromCsv(removeQutationsFromString(data[5])));
+						record.setToDate(convertDateFromCsv(removeQutationsFromString(data[6])));
+						record.setSortingPriority(convertToIntFromCsv(removeQutationsFromString(data[7])));
 						return record;
 					})
 					.collect(Collectors.toList());
@@ -51,6 +50,9 @@ public class CsvService {
 		}
 	}
 
+	private String removeQutationsFromString(String str){
+		return  str.replace("\"", "");
+	}
 	private Date convertDateFromCsv(String csvValue){
         try {
 			if(csvValue != null && !csvValue.isEmpty()){
