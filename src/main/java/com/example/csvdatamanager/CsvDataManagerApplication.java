@@ -1,4 +1,4 @@
-package main.java.com.example.csvdatamanager;
+package com.example.csvdatamanager;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,5 +9,4 @@ public class CsvDataManagerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CsvDataManagerApplication.class, args);
 	}
-
 }

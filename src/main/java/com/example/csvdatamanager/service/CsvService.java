@@ -1,20 +1,25 @@
-package main.java.com.example.csvdatamanager.service;
+package com.example.csvdatamanager.service;
 
-import main.java.com.example.csvdatamanager.exception.CsvRecordNotFoundException;
-import main.java.com.example.csvdatamanager.model.CsvRecord;
-import main.java.com.example.csvdatamanager.repository.CsvRecordRepository;
+import com.example.csvdatamanager.exception.CsvRecordNotFoundException;
+import com.example.csvdatamanager.model.CsvRecord;
+import com.example.csvdatamanager.repository.CsvRecordRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
 public class CsvService {
 	private final CsvRecordRepository csvRecordRepository;
+	private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
 
 	public CsvService(CsvRecordRepository csvRecordRepository) {
 		this.csvRecordRepository = csvRecordRepository;
@@ -27,10 +32,14 @@ public class CsvService {
 					.map(line -> line.split(","))
 					.map(data -> {
 						CsvRecord record = new CsvRecord();
-						record.setCode(data[0]);
-						record.setName(data[1]);
-						record.setDescription(data[2]);
-						record.setDate(data[3]);
+						record.setSource(data[0]);
+						record.setCodeListCode(data[1]);
+						record.setCode(data[2]);
+						record.setDisplayValue(data[3]);
+						record.setLongDescription(data[4]);
+						record.setFromDate(convertDateFromCsv(data[5]));
+						record.setToDate(convertDateFromCsv(data[5]));
+						record.setSortingPriority(Integer.parseInt(data[6]));
 						return record;
 					})
 					.collect(Collectors.toList());
@@ -40,6 +49,17 @@ public class CsvService {
 			throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
 		}
 	}
+
+	private Date convertDateFromCsv(String csvValue){
+        try {
+			if(csvValue != null && !csvValue.isEmpty()){
+				return formatter.parse(csvValue);
+			}
+            return null;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	public List<CsvRecord> getAllRecords() {
 		return csvRecordRepository.findAll();

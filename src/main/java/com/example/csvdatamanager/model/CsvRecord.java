@@ -1,12 +1,8 @@
-package main.java.com.example.csvdatamanager.model;
+package com.example.csvdatamanager.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.util.Date;
 
-@Entity
 public class CsvRecord {
-    @Id
     private String code;
     private String source;
     private String codeListCode;

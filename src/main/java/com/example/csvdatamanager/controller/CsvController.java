@@ -1,11 +1,12 @@
-package main.java.com.example.csvdatamanager.controller;
+package com.example.csvdatamanager.controller;
 
-import main.java.com.example.csvdatamanager.model.CsvRecord;
-import main.java.com.example.csvdatamanager.service.CsvService;
+import com.example.csvdatamanager.model.CsvRecord;
+import com.example.csvdatamanager.service.CsvService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/csv")
