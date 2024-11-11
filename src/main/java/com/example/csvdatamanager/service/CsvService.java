@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class CsvService {
 	private final CsvRecordRepository csvRecordRepository;
-	private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+	private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yy", Locale.ENGLISH);
 
 	public CsvService(CsvRecordRepository csvRecordRepository) {
 		this.csvRecordRepository = csvRecordRepository;
@@ -29,17 +29,18 @@ public class CsvService {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
 			List<CsvRecord> records = reader.lines()
 					.skip(1)
-					.map(line -> line.split(","))
-					.map(data -> {
+					.map(line -> {
+						String[] data = line.split(",");
 						CsvRecord record = new CsvRecord();
 						record.setSource(data[0]);
+						String temp = record.getSource();
 						record.setCodeListCode(data[1]);
 						record.setCode(data[2]);
 						record.setDisplayValue(data[3]);
 						record.setLongDescription(data[4]);
-						record.setFromDate(convertDateFromCsv(data[5]));
-						record.setToDate(convertDateFromCsv(data[5]));
-						record.setSortingPriority(Integer.parseInt(data[6]));
+						record.setFromDate(convertDateFromCsv(data[5].replace("\"", "")));
+						record.setToDate(convertDateFromCsv(data[6].replace("\"", "")));
+						record.setSortingPriority(convertToIntFromCsv(data[7].replace("\"", "")));
 						return record;
 					})
 					.collect(Collectors.toList());
@@ -60,6 +61,13 @@ public class CsvService {
             throw new RuntimeException(e);
         }
     }
+
+	private int convertToIntFromCsv(String csvValue){
+		if(csvValue != null && !csvValue.isEmpty()) {
+			return Integer.parseInt(csvValue);
+		}
+		return 0;
+	}
 
 	public List<CsvRecord> getAllRecords() {
 		return csvRecordRepository.findAll();
